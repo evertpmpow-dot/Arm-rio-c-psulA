@@ -11,23 +11,23 @@ jobs:
       - name: Baixar projeto
         uses: actions/checkout@v4
 
-      - name: Configurar Java
+      - name: Configurar Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: "17"
 
       - name: Configurar Android
         uses: android-actions/setup-android@v3
 
-      - name: Aceitar licenças
-        run: yes | sdkmanager --licenses || true
-
-      - name: Configurar Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - name: Baixar Gradle
+        run: |
+          wget https://services.gradle.org/distributions/gradle-8.7-bin.zip
+          unzip -q gradle-8.7-bin.zip
 
       - name: Gerar APK
-        run: gradle assembleDebug
+        run: |
+          ./gradle-8.7/bin/gradle assembleDebug
 
       - name: Salvar APK
         uses: actions/upload-artifact@v4
