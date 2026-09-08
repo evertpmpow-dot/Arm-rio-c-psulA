@@ -22,15 +22,22 @@ jobs:
 
       - name: Baixar Gradle
         run: |
-          wget https://services.gradle.org/distributions/gradle-8.7-bin.zip
+          wget -q https://services.gradle.org/distributions/gradle-8.7-bin.zip
           unzip -q gradle-8.7-bin.zip
+
+      - name: Localizar projeto Android
+        run: |
+          find . -name "settings.gradle*" -o -name "build.gradle*"
 
       - name: Gerar APK
         run: |
-          ./gradle-8.7/bin/gradle assembleDebug
+          PROJECT=$(find . -name "settings.gradle.kts" -o -name "settings.gradle" | head -n 1)
+          PROJECT_DIR=$(dirname "$PROJECT")
+          echo "Projeto encontrado em: $PROJECT_DIR"
+          ./gradle-8.7/bin/gradle -p "$PROJECT_DIR" :app:assembleDebug
 
       - name: Salvar APK
         uses: actions/upload-artifact@v4
         with:
           name: Armario-do-Everton-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: "**/app/build/outputs/apk/debug/app-debug.apk"
